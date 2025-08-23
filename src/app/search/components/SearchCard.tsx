@@ -3,9 +3,9 @@
 import { formatCount, formatDate } from "@/app/utils/helperfunction"; // make sure formatDate exists
 import Image from "next/image";
 import Link from "next/link";
-
+import { Video } from "@/app/utils/fetchVideos";
 interface Props {
-  video: any;
+  video: Video;
 }
 
 export default function SearchCard({ video }: Props) {
@@ -39,7 +39,7 @@ export default function SearchCard({ video }: Props) {
           <div className="flex space-x-2 text-sm text-gray-600">
             <span>{formatCount(video.statistics.likeCount)} likes</span>
           </div>
-           {/* Description (2 lines max) */}
+          {/* Description (2 lines max) */}
           <p className="text-sm text-gray-600 line-clamp-2">
             {video.snippet.description}
           </p>

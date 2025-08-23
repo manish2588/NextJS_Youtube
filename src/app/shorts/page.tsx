@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { fetchTrendingVideos, Video } from "@/app/utils/fetchVideos";
+import { fetchTrendingVideos} from "@/app/utils/fetchVideos";
 import Shorts from "./components/Shorts";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -25,7 +25,8 @@ export default function ShortsPage() {
     isError,
   } = useInfiniteQuery({
     queryKey: ["shorts"],
-    queryFn: ({ pageParam = "" }) => fetchTrendingVideos(pageParam),
+    queryFn: ({ pageParam }) => fetchTrendingVideos(pageParam),
+    initialPageParam: "", // Required in React Query v5
     getNextPageParam: (lastPage) => lastPage.nextPageToken ?? undefined,
   });
 

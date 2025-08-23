@@ -6,7 +6,7 @@ import Providers from "./Provider/Provides";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/queryClient";
 import BottomTabBar from "./components/BottomTab";
-import RouteLoader from "./components/RouteLoader";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -34,12 +34,9 @@ export default function RootLayout({
       >
         <QueryClientProvider client={queryClient}>
           <Providers>
-            
             <Navbar />
-          <main className="mt-16">
-              {children}
-          </main>
-          <BottomTabBar/>
+            <main className="mt-16">{children}</main>
+            <BottomTabBar />
           </Providers>
         </QueryClientProvider>
       </body>

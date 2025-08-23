@@ -22,6 +22,7 @@ export async function GET(request: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    console.error("Failed to fetch suggestions:", error);
     return new Response(JSON.stringify({ error: "Failed to fetch suggestions" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

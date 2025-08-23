@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import SearchCard from "./components/SearchCard";
 import { fetchSearchResults } from "@/app/utils/fetchVideos"; // your existing fetch function
 import SearchCardShimmer from "./components/SearchCardShimmer";
-
+import { Video } from "@/app/utils/fetchVideos";
 export default function SearchPage() {
   const query = useSelector((state: RootState) => state.query.value);
 
@@ -31,7 +31,7 @@ export default function SearchPage() {
 
   return (
     <div className="p-4 lg:p-8 flex flex-col md:px-6 lg:px-40 gap-4 md:gap-6 lg:gap-10">
-      {data?.map((video: any) => (
+      {data?.map((video: Video) => (
         <SearchCard key={video.id} video={video} />
       ))}
     </div>

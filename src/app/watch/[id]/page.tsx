@@ -28,26 +28,39 @@ import {
 } from "@/app/utils/fetchVideos";
 import Comment from "../components/Comment";
 
+// Extended Video type for fetchVideoById response
+interface ExtendedVideo extends VideoType {
+  channelThumbnail?: string;
+  subscriberCount?: string;
+}
+
 export default function VideoPage() {
-  const { id } = useParams();
+  const params = useParams();
+  
+  // Handle the case where id might be string[] or undefined
+  const rawId = params.id;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
+  
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
+
   const {
     data: comments,
     isLoading: commentsLoading,
     error: commentsError,
-  } = useQuery<CommentType[]>({
+  } = useQuery<CommentType[], Error>({
     queryKey: ["comments", id],
     queryFn: () => fetchCommentsByVideoId(id!),
     enabled: !!id,
   });
+
   const {
     data: video,
     isLoading,
     error,
-  } = useQuery({
+  } = useQuery<ExtendedVideo, Error>({
     queryKey: ["video", id],
     queryFn: () => fetchVideoById(id!),
     enabled: !!id,
@@ -57,11 +70,12 @@ export default function VideoPage() {
     data: relatedVideos,
     isLoading: relatedLoading,
     error: relatedError,
-  } = useQuery<VideoType[]>({
+  } = useQuery<VideoType[], Error>({
     queryKey: ["relatedVideos", id],
     queryFn: () => fetchRelatedVideos(id!),
     enabled: !!id,
   });
+
   const handleLike = () => {
     setLiked(!liked);
     if (disliked) setDisliked(false);
@@ -83,7 +97,7 @@ export default function VideoPage() {
       </div>
     );
 
-  if (error)
+  if (error || !video)
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-red-500">Error loading video</p>

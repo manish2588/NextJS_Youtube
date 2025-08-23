@@ -1,3 +1,70 @@
+// YouTube API Response Types
+interface YouTubeAPIVideoItem {
+  id: string;
+  snippet: VideoSnippet;
+  statistics: {
+    viewCount: string;
+    likeCount: string;
+    [key: string]: string; // for other statistics fields
+  };
+  contentDetails?: {
+    duration: string;
+    [key: string]: string; // for other content details
+  };
+}
+
+interface YouTubeAPIResponse {
+  items: YouTubeAPIVideoItem[];
+  nextPageToken?: string;
+}
+
+interface YouTubeAPISearchItem {
+  id: {
+    videoId: string;
+  };
+  snippet: VideoSnippet;
+}
+
+interface YouTubeAPISearchResponse {
+  items: YouTubeAPISearchItem[];
+}
+
+interface YouTubeAPIChannelItem {
+  snippet: {
+    thumbnails: {
+      default: {
+        url: string;
+      };
+    };
+  };
+  statistics: {
+    subscriberCount: string;
+    [key: string]: string; // for other statistics
+  };
+}
+
+interface YouTubeAPIChannelResponse {
+  items: YouTubeAPIChannelItem[];
+}
+
+interface YouTubeAPICommentItem {
+  id: string;
+  snippet: {
+    topLevelComment: {
+      snippet: {
+        authorDisplayName: string;
+        authorProfileImageUrl: string;
+        textDisplay: string;
+        publishedAt: string;
+      };
+    };
+  };
+}
+
+interface YouTubeAPICommentResponse {
+  items: YouTubeAPICommentItem[];
+}
+
 export interface VideoSnippet {
   title: string;
   description: string;
@@ -18,7 +85,19 @@ export interface Video {
   snippet: VideoSnippet;
   statistics: {
     viewCount: string;
+    likeCount: string;
   };
+  contentDetails?: {
+    duration: string;
+  };
+}
+
+export interface Comment {
+  id: string;
+  authorName: string;
+  authorProfileImageUrl: string;
+  text: string;
+  publishedAt: string;
 }
 
 const API_KEY = "AIzaSyCC_loOQ7Wg3Uuu9y-f6BvNybr5UUNHvfI";
@@ -42,21 +121,23 @@ export const CATEGORY_IDS: Record<string, string> = {
 };
 
 // Fetch trending videos (all categories)
-// fetchVideos.ts
 export const fetchTrendingVideos = async (pageToken = ""): Promise<{ items: Video[]; nextPageToken?: string }> => {
   const res = await fetch(
     `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&videoDuration=long&maxResults=10&regionCode=US&pageToken=${pageToken}&key=${API_KEY}`
   );
   if (!res.ok) throw new Error("Failed to fetch videos");
-  const data = await res.json();
-  return { items: data.items.map((item: any) => ({
+  const data: YouTubeAPIResponse = await res.json();
+  return { 
+    items: data.items.map((item: YouTubeAPIVideoItem) => ({
       id: item.id,
       snippet: item.snippet,
       statistics: item.statistics,
-    })), nextPageToken: data.nextPageToken };
+    })), 
+    nextPageToken: data.nextPageToken 
+  };
 };
 
-export const fetchVideosByCategoryId = async (categoryId: string, pageToken = ""): Promise<{ items: Video[]; nextPageToken?: string }> => {
+export const fetchVideosByCategoryId = async (categoryId: string | string[], pageToken = ""): Promise<{ items: Video[]; nextPageToken?: string }> => {
   if (categoryId === "all") return fetchTrendingVideos(pageToken);
 
   const res = await fetch(
@@ -64,34 +145,41 @@ export const fetchVideosByCategoryId = async (categoryId: string, pageToken = ""
   );
   if (!res.ok) throw new Error("Failed to fetch category videos");
 
-  const data = await res.json();
-  return { items: data.items.map((item: any) => ({
+  const data: YouTubeAPIResponse = await res.json();
+  return { 
+    items: data.items.map((item: YouTubeAPIVideoItem) => ({
       id: item.id,
       snippet: item.snippet,
       statistics: item.statistics,
-    })), nextPageToken: data.nextPageToken };
+    })), 
+    nextPageToken: data.nextPageToken 
+  };
 };
 
-
 // Fetch single channel logo
-export const fetchChannelLogo = async (channelId: string) => {
+export const fetchChannelLogo = async (channelId: string): Promise<string> => {
   const res = await fetch(
     `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${API_KEY}`
   );
   if (!res.ok) throw new Error("Failed to fetch channel logo");
 
-  const data = await res.json();
+  const data: YouTubeAPIChannelResponse = await res.json();
   return data.items[0].snippet.thumbnails.default.url;
 };
 
+// Extended Video interface for fetchVideoById return
+interface ExtendedVideo extends Video {
+  channelThumbnail: string;
+  subscriberCount: string;
+}
 
 // Fetch single video by ID
-export const fetchVideoById = async (id: string) => {
+export const fetchVideoById = async (id: string | string[]): Promise<ExtendedVideo> => {
   const res = await fetch(
     `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${id}&key=${API_KEY}`
   );
   if (!res.ok) throw new Error("Failed to fetch video");
-  const data = await res.json();
+  const data: YouTubeAPIResponse = await res.json();
   const video = data.items[0];
 
   // Fetch channel info including subscriber count
@@ -99,7 +187,7 @@ export const fetchVideoById = async (id: string) => {
     `https://www.googleapis.com/youtube/v3/channels?part=snippet,statistics&id=${video.snippet.channelId}&key=${API_KEY}`
   );
   if (!channelRes.ok) throw new Error("Failed to fetch channel info");
-  const channelData = await channelRes.json();
+  const channelData: YouTubeAPIChannelResponse = await channelRes.json();
   const channel = channelData.items[0];
 
   return {
@@ -109,7 +197,6 @@ export const fetchVideoById = async (id: string) => {
   };
 };
 
-// Fetch related videos
 // Fetch related videos - UPDATED VERSION
 export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
   try {
@@ -129,7 +216,7 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
 
       if (!videoRes.ok) throw new Error("Failed to fetch video details");
 
-      const videoData = await videoRes.json();
+      const videoData: YouTubeAPIResponse = await videoRes.json();
       const channelId = videoData.items[0].snippet.channelId;
 
       // Search for videos from the same channel
@@ -140,12 +227,12 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
       if (!channelSearchRes.ok)
         throw new Error("Failed to fetch channel videos");
 
-      const channelSearchData = await channelSearchRes.json();
+      const channelSearchData: YouTubeAPISearchResponse = await channelSearchRes.json();
 
       // Extract video IDs
       const videoIdsArr = channelSearchData.items
-        .map((item: any) => item.id?.videoId)
-        .filter(Boolean)
+        .map((item: YouTubeAPISearchItem) => item.id?.videoId)
+        .filter((videoId): videoId is string => Boolean(videoId))
         .filter((videoId: string) => videoId !== id); // Exclude current video
 
       if (videoIdsArr.length === 0) return [];
@@ -159,22 +246,22 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
 
       if (!videosRes.ok) throw new Error("Failed to fetch video details");
 
-      const videosData = await videosRes.json();
+      const videosData: YouTubeAPIResponse = await videosRes.json();
 
-      return videosData.items.map((item: any) => ({
+      return videosData.items.map((item: YouTubeAPIVideoItem) => ({
         id: item.id,
         snippet: item.snippet,
         statistics: item.statistics,
       }));
     }
 
-    const searchData = await searchRes.json();
+    const searchData: YouTubeAPISearchResponse = await searchRes.json();
     console.log("Search API data:", searchData);
 
-    // Extract video IDs safely
+    // Extract video IDs safely with type guards
     const videoIdsArr = searchData.items
-      .map((item: any) => item.id?.videoId)
-      .filter(Boolean);
+      .map((item: YouTubeAPISearchItem) => item.id?.videoId)
+      .filter((videoId): videoId is string => Boolean(videoId));
 
     if (videoIdsArr.length === 0) return [];
 
@@ -187,9 +274,9 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
 
     if (!videosRes.ok) throw new Error("Failed to fetch video details");
 
-    const videosData = await videosRes.json();
+    const videosData: YouTubeAPIResponse = await videosRes.json();
 
-    return videosData.items.map((item: any) => ({
+    return videosData.items.map((item: YouTubeAPIVideoItem) => ({
       id: item.id,
       snippet: item.snippet,
       statistics: item.statistics,
@@ -201,32 +288,23 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
 };
 
 // Fetch comments for a video
-export const fetchCommentsByVideoId = async (videoId: string) => {
+export const fetchCommentsByVideoId = async (videoId: string | string[]): Promise<Comment[]> => {
   const res = await fetch(
     `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=15&key=${API_KEY}`
   );
 
   if (!res.ok) throw new Error("Failed to fetch comments");
 
-  const data = await res.json();
+  const data: YouTubeAPICommentResponse = await res.json();
 
-  return data.items.map((item: any) => ({
+  return data.items.map((item: YouTubeAPICommentItem) => ({
     id: item.id,
     authorName: item.snippet.topLevelComment.snippet.authorDisplayName,
-    authorProfileImageUrl:
-      item.snippet.topLevelComment.snippet.authorProfileImageUrl,
+    authorProfileImageUrl: item.snippet.topLevelComment.snippet.authorProfileImageUrl,
     text: item.snippet.topLevelComment.snippet.textDisplay,
     publishedAt: item.snippet.topLevelComment.snippet.publishedAt,
   }));
 };
-
-export interface Comment {
-  id: string;
-  authorName: string;
-  authorProfileImageUrl: string;
-  text: string;
-  publishedAt: string;
-}
 
 // Fetch search results by query
 export const fetchSearchResults = async (q: string): Promise<Video[]> => {
@@ -238,12 +316,12 @@ export const fetchSearchResults = async (q: string): Promise<Video[]> => {
 
   if (!res.ok) throw new Error("Failed to fetch search results");
 
-  const data = await res.json();
+  const data: YouTubeAPISearchResponse = await res.json();
 
-  // Extract video IDs
+  // Extract video IDs with proper typing
   const videoIds = data.items
-    .map((item: any) => item.id.videoId)
-    .filter(Boolean);
+    .map((item: YouTubeAPISearchItem) => item.id.videoId)
+    .filter((videoId): videoId is string => Boolean(videoId));
 
   if (videoIds.length === 0) return [];
 
@@ -256,13 +334,12 @@ export const fetchSearchResults = async (q: string): Promise<Video[]> => {
 
   if (!detailsRes.ok) throw new Error("Failed to fetch video details");
 
-  const detailsData = await detailsRes.json();
+  const detailsData: YouTubeAPIResponse = await detailsRes.json();
 
-  return detailsData.items.map((item: any) => ({
+  return detailsData.items.map((item: YouTubeAPIVideoItem) => ({
     id: item.id,
     snippet: item.snippet,
     statistics: item.statistics,
     contentDetails: item.contentDetails, // this includes duration in ISO 8601 format
   }));
 };
-

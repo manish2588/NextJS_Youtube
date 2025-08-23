@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { IoIosMic } from "react-icons/io";
 import { useDispatch } from "react-redux";
@@ -10,6 +10,51 @@ import { RxCross1 } from "react-icons/rx";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaMicrophoneSlash } from "react-icons/fa";
 
+// TypeScript interfaces for Speech Recognition
+interface SpeechRecognitionResult {
+  readonly isFinal: boolean;
+  readonly [index: number]: SpeechRecognitionAlternative;
+}
+
+interface SpeechRecognitionAlternative {
+  readonly transcript: string;
+  readonly confidence: number;
+}
+
+interface SpeechRecognitionResultList {
+  readonly length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionEvent {
+  readonly resultIndex: number;
+  readonly results: SpeechRecognitionResultList;
+}
+
+interface SpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  start(): void;
+  stop(): void;
+  abort(): void;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  onerror: ((event: Event) => void) | null;
+  onend: (() => void) | null;
+}
+
+interface SpeechRecognitionConstructor {
+  new (): SpeechRecognition;
+}
+
+declare global {
+  interface Window {
+    SpeechRecognition?: SpeechRecognitionConstructor;
+    webkitSpeechRecognition?: SpeechRecognitionConstructor;
+  }
+}
+
 export default function Search() {
   const [query, setQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -17,26 +62,26 @@ export default function Search() {
 
   const [isListening, setIsListening] = useState(false);
   const [liveTranscript, setLiveTranscript] = useState<string>(""); // 👈 live transcript
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const inputRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // Navigate to search page
-  const triggerSearch = (q: string) => {
+  // Navigate to search page - memoized with useCallback
+  const triggerSearch = useCallback((q: string) => {
     if (!q.trim()) return;
     dispatch(setQueryRedux(q));
     setShowSuggestions(false);
     router.push("/search");
-  };
+  }, [dispatch, router]);
 
   // Setup SpeechRecognition
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
-        (window as any).SpeechRecognition ||
-        (window as any).webkitSpeechRecognition;
+        window.SpeechRecognition ||
+        window.webkitSpeechRecognition;
 
       if (SpeechRecognition) {
         recognitionRef.current = new SpeechRecognition();
@@ -44,7 +89,7 @@ export default function Search() {
         recognitionRef.current.interimResults = true; // 👈 show live words
         recognitionRef.current.lang = "en-US";
 
-        recognitionRef.current.onresult = (event: any) => {
+        recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
           let interimTranscript = "";
           let finalTranscript = "";
 
@@ -80,7 +125,7 @@ export default function Search() {
         };
       }
     }
-  }, []);
+  }, [triggerSearch]); // Now triggerSearch is included in dependencies
 
   const startListening = () => {
     if (recognitionRef.current) {
@@ -125,7 +170,10 @@ export default function Search() {
   // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node)
+      ) {
         setShowSuggestions(false);
       }
     };

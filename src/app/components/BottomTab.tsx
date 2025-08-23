@@ -4,22 +4,37 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { IoHomeOutline, IoPersonCircleOutline } from "react-icons/io5";
 import { SiYoutubeshorts } from "react-icons/si";
+import { IconType } from "react-icons";
+
+// Define the type for navigation items
+interface NavigationItem {
+  href: string;
+  label: string;
+  icon: IconType;
+  match: (pathname: string) => boolean;
+}
+
 export default function BottomTabBar() {
   const pathname = usePathname();
 
-  const items = [
-    { href: "/", label: "Home", icon: IoHomeOutline, match: (p) => p === "/" },
+  const items: NavigationItem[] = [
+    { 
+      href: "/", 
+      label: "Home", 
+      icon: IoHomeOutline, 
+      match: (p: string) => p === "/" 
+    },
     {
       href: "/shorts",
       label: "Shorts",
       icon: SiYoutubeshorts,
-      match: (p) => p.startsWith("/shorts"),
+      match: (p: string) => p.startsWith("/shorts"),
     },
     {
       href: "/profile",
       label: "Profile",
       icon: IoPersonCircleOutline,
-      match: (p) => p.startsWith("/profile"),
+      match: (p: string) => p.startsWith("/profile"),
     },
   ];
 
