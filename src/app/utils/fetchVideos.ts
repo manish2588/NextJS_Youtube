@@ -100,7 +100,7 @@ export interface Comment {
   publishedAt: string;
 }
 
-const API_KEY = "AIzaSyCC_loOQ7Wg3Uuu9y-f6BvNybr5UUNHvfI";
+const API_KEY = "AIzaSyA0G-xMxl48275WNxbjSu5cBnr6Pcv8dmg";
 
 // YouTube category IDs (for reference)
 export const CATEGORY_IDS: Record<string, string> = {
