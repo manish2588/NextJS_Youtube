@@ -36,11 +36,11 @@ interface ExtendedVideo extends VideoType {
 
 export default function VideoPage() {
   const params = useParams();
-  
+
   // Handle the case where id might be string[] or undefined
   const rawId = params.id;
   const id = Array.isArray(rawId) ? rawId[0] : rawId;
-  
+
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -114,7 +114,7 @@ export default function VideoPage() {
       <div className="leftBox  w-full lg:w-[60vw]">
         <div className=" ">
           {/* Main Video Section */}
-          <div className="w-full md:w-[60vw]">
+          <div className="w-full lg:w-[60vw]">
             {/* Video Player */}
             <div className="relative w-full h-96 md:h-[70vh] ">
               <iframe

@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { RxCross1 } from "react-icons/rx";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaMicrophoneSlash } from "react-icons/fa";
-
+import { closeSidebar } from "../redux/slices/layoutSlice";
 // TypeScript interfaces for Speech Recognition
 interface SpeechRecognitionResult {
   readonly isFinal: boolean;
@@ -69,19 +69,22 @@ export default function Search() {
   const router = useRouter();
 
   // Navigate to search page - memoized with useCallback
-  const triggerSearch = useCallback((q: string) => {
-    if (!q.trim()) return;
-    dispatch(setQueryRedux(q));
-    setShowSuggestions(false);
-    router.push("/search");
-  }, [dispatch, router]);
+  const triggerSearch = useCallback(
+    (q: string) => {
+      if (!q.trim()) return;
+      dispatch(setQueryRedux(q));
+      setShowSuggestions(false);
+      router.push("/search");
+      setTimeout(() => dispatch(closeSidebar()), 300);
+    },
+    [dispatch, router]
+  );
 
   // Setup SpeechRecognition
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
-        window.SpeechRecognition ||
-        window.webkitSpeechRecognition;
+        window.SpeechRecognition || window.webkitSpeechRecognition;
 
       if (SpeechRecognition) {
         recognitionRef.current = new SpeechRecognition();
