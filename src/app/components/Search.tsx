@@ -250,31 +250,46 @@ export default function Search() {
         <IoIosMic className="text-gray-700 text-2xl" />
       </button>
 
-      <AnimatePresence>
-        {isListening && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="fixed w-72 lg:w-[500px] h-72 top-20 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center justify-between space-y-4 border z-50"
-          >
-            {/* Show live transcript */}
-            <div className="flex items-center space-x-2">
-              <p className="text-2xl font-medium text-gray-900">
-                {liveTranscript || "Listening..."}
-              </p>
-            </div>
+     <AnimatePresence>
+  {isListening && (
+    <>
+      {/* Overlay */}
+      <motion.div
+        key="overlay"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.5 }}
+        exit={{ opacity: 0 }}
+        onClick={stopListening} // Clicking outside closes the dialog
+        className="fixed inset-0 bg-black z-40"
+      />
 
-            {/* Stop button with mic-off icon */}
-            <button
-              onClick={stopListening}
-              className="flex items-center justify-center h-14 w-14 space-x-2 bg-red-500 text-white rounded-full hover:bg-red-600"
-            >
-              <FaMicrophoneSlash className="w-6 h-6 rounded-full" />
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Dialog below navbar */}
+      <motion.div
+        key="mic-dialog"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        className="fixed w-72 lg:w-[500px] h-72 top-20 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center justify-between space-y-4 border z-50"
+      >
+        {/* Live transcript */}
+        <div className="flex items-center space-x-2">
+          <p className="text-2xl font-medium text-gray-900">
+            {liveTranscript || "Listening..."}
+          </p>
+        </div>
+
+        {/* Stop button */}
+        <button
+          onClick={stopListening}
+          className="flex items-center justify-center h-14 w-14 bg-red-500 text-white rounded-full hover:bg-red-600"
+        >
+          <FaMicrophoneSlash className="w-6 h-6" />
+        </button>
+      </motion.div>
+    </>
+  )}
+</AnimatePresence>
+
     </div>
   );
 }
