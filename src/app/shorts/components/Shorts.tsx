@@ -30,11 +30,11 @@ export default function Shorts({ video }: Props) {
       <div
         className="absolute inset-0 z-10"
         onWheel={(e) => {
-          e.stopPropagation(); // Let parent Swiper or scroll handler catch it
+          e.stopPropagation(); 
         }}
       />
 
-      {/* Overlay info */}
+      
       <div className="absolute bottom-2 left-2 text-white z-20">
         <div className="flex items-center space-x-2 mb-1">
           {channelLogo && (

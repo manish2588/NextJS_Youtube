@@ -1,6 +1,6 @@
 "use client";
 
-import { formatCount, formatDate } from "@/app/utils/helperfunction"; // make sure formatDate exists
+import { formatCount, formatDate } from "@/app/utils/helperfunction"; 
 import Image from "next/image";
 import Link from "next/link";
 import { Video } from "@/app/utils/fetchVideos";
@@ -29,17 +29,17 @@ export default function SearchCard({ video }: Props) {
           </h3>
           <p className="text-sm text-gray-600">{video.snippet.channelTitle}</p>
 
-          {/* Views and Published Date */}
+        
           <div className="flex space-x-2 text-sm text-gray-600 mt-1">
             <span>{formatCount(video.statistics.viewCount)} views</span>
             <span>{formatDate(video.snippet.publishedAt)}</span>
           </div>
 
-          {/* Likes */}
+         
           <div className="flex space-x-2 text-sm text-gray-600">
             <span>{formatCount(video.statistics.likeCount)} likes</span>
           </div>
-          {/* Description (2 lines max) */}
+         
           <p className="text-sm text-gray-600 line-clamp-2">
             {video.snippet.description}
           </p>

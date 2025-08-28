@@ -12,16 +12,14 @@ const categories = [
   { id: "20", name: "Gaming" },
   { id: "25", name: "News" },
   { id: "17", name: "Sports" },
-  { id: "27", name: "Education" },
-  { id: "1", name: "Movies" },
   { id: "23", name: "Comedy" },
-  { id: "19", name: "Travel" },
+  { id: "1", name: "Movies" },
   { id: "22", name: "People & Blogs" },
   { id: "26", name: "How-to & Style" },
+   { id: "2", name: "Autos & Vehicles" },
   { id: "28", name: "Science & Technology" },
-  { id: "29", name: "Nonprofits & Activism" },
-  { id: "30", name: "Movies/Entertainment" },
-  { id: "31", name: "Anime/Animation" },
+  
+  { id: "24", name: "Entertainment" },
 ];
 
 interface ButtonSliderProps {

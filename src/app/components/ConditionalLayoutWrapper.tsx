@@ -13,11 +13,11 @@ export default function ConditionalLayoutWrapper({
   const isHomePage = pathname === "/";
 
   if (isHomePage) {
-    // Home page - no static sidebar, let the page handle its own sidebar
+    // Home page - no static sidebar
     return <>{children}</>;
   }
 
-  // Other pages - wrap with static sidebar
+  // Other pages - static sidebar
   return (
     <div className="flex">
       <StaticSidebar />

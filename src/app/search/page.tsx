@@ -1,10 +1,10 @@
 "use client";
 
 import { useSelector } from "react-redux";
-import { RootState } from "../redux/store"; // adjust path
+import { RootState } from "../redux/store"; 
 import { useQuery } from "@tanstack/react-query";
 import SearchCard from "./components/SearchCard";
-import { fetchSearchResults } from "@/app/utils/fetchVideos"; // your existing fetch function
+import { fetchSearchResults } from "@/app/utils/fetchVideos"; 
 import SearchCardShimmer from "./components/SearchCardShimmer";
 import { Video } from "@/app/utils/fetchVideos";
 export default function SearchPage() {
@@ -13,7 +13,7 @@ export default function SearchPage() {
   const { data, isLoading, isError } = useQuery({
     queryKey: ["searchResults", query],
     queryFn: () => fetchSearchResults(query),
-    enabled: !!query, // only fetch if query exists
+    enabled: !!query, 
   });
 
   if (!query)

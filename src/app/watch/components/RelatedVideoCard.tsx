@@ -1,4 +1,4 @@
-// components/RelatedVideoCard.tsx
+
 "use client";
 import Image from "next/image";
 import { formatCount, formatDate } from "@/app/utils/helperfunction";

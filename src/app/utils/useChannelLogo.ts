@@ -6,6 +6,6 @@ export const useChannelLogo = (channelId: string) => {
   return useQuery({
     queryKey: ["channelLogo", channelId],
     queryFn: () => fetchChannelLogo(channelId),
-    staleTime: 1000 * 60 * 60, // cache for 1 hour
+    staleTime: 1000 * 60 * 60, 
   });
 };

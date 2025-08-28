@@ -5,7 +5,7 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../redux/store";
 import { toggleSidebar } from "../redux/slices/layoutSlice";
-import Search from "./Search"; // import the new Search component
+import Search from "./Search";
 import { CgProfile } from "react-icons/cg";
 import Link from "next/link";
 export default function Navbar() {
@@ -17,9 +17,8 @@ export default function Navbar() {
 
   return (
     <nav className="w-full fixed top-0 z-50 h-18 bg-white shadow-md flex items-center justify-between px-4 md:px-6">
-      {/* ---- Desktop Navbar (md and up) ---- */}
+      {/* Navbar */}
       <div className="hidden md:flex w-full items-center justify-between">
-        {/* Left - Logo and Hamburger */}
         <div className="flex items-center gap-4">
           <button
             onClick={() => dispatch(toggleSidebar())}
@@ -35,10 +34,8 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Middle - Search Component */}
         <Search />
 
-        {/* Right - Icons */}
         <div className="flex items-center gap-4">
           <button className="p-2 rounded-full hover:bg-gray-100 transition-colors">
             <Link href={"/subscriptions"}>
@@ -53,9 +50,8 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* ---- Mobile Navbar (below md) ---- */}
+      {/* Mobile Navbar */}
       <div className="fixed flex py-4  top-0 md:hidden w-full space-x-3">
-        {/* Left - YouTube Logo */}
         <div className="">
           <FaYoutube className="text-red-600 text-4xl" />
         </div>

@@ -28,7 +28,6 @@ import {
 } from "@/app/utils/fetchVideos";
 import Comment from "../components/Comment";
 
-// Extended Video type for fetchVideoById response
 interface ExtendedVideo extends VideoType {
   channelThumbnail?: string;
   subscriberCount?: string;
@@ -37,7 +36,6 @@ interface ExtendedVideo extends VideoType {
 export default function VideoPage() {
   const params = useParams();
 
-  // Handle the case where id might be string[] or undefined
   const rawId = params.id;
   const id = Array.isArray(rawId) ? rawId[0] : rawId;
 
@@ -115,7 +113,6 @@ export default function VideoPage() {
         <div className=" ">
           {/* Main Video Section */}
           <div className="w-full lg:w-[60vw]">
-            {/* Video Player */}
             <div className="relative w-full h-96 md:h-[70vh] ">
               <iframe
                 src={`https://www.youtube.com/embed/${video.id}`}
@@ -125,14 +122,12 @@ export default function VideoPage() {
               />
             </div>
 
-            {/* Video Title */}
+            {/* Video Details Part*/}
             <h1 className="text-xl font-semibold mt-4  leading-tight text-gray-900 dark:text-white">
               {video.snippet.title}
             </h1>
 
-            {/* Video Stats and Actions */}
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-3 gap-3">
-              {/* Channel Info */}
               <div className="flex items-center gap-3">
                 <Image
                   src={
@@ -171,9 +166,7 @@ export default function VideoPage() {
                 </button>
               </div>
 
-              {/* Action Buttons */}
               <div className="flex items-center gap-2">
-                {/* Like/Dislike */}
                 <div className="flex items-center bg-gray-100 dark:bg-gray-800 rounded-full">
                   <button
                     onClick={handleLike}
@@ -209,7 +202,6 @@ export default function VideoPage() {
                   </button>
                 </div>
 
-                {/* Share Button */}
                 <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                   <IoShareOutline className="w-5 h-5" />
                   <span className="text-sm font-medium hidden sm:block">
@@ -217,7 +209,6 @@ export default function VideoPage() {
                   </span>
                 </button>
 
-                {/* Download Button */}
                 <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                   <IoDownloadOutline className="w-5 h-5" />
                   <span className="text-sm font-medium hidden sm:block">
@@ -225,7 +216,6 @@ export default function VideoPage() {
                   </span>
                 </button>
 
-                {/* More Options */}
                 <button className="flex items-center justify-center w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                   <BsThreeDots className="w-5 h-5" />
                 </button>

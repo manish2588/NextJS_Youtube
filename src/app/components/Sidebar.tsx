@@ -28,7 +28,7 @@ export default function Sidebar() {
     label,
     category,
     href,
-    usePath = false, // 👈 use pathname for active
+    usePath = false, 
   }: {
     icon: IconType;
     label: string;
@@ -95,7 +95,7 @@ export default function Sidebar() {
           }`}
         />
 
-        {/* Explore Section (Redux, no Link, no pathname active) */}
+        {/* Explore Section*/}
         {isSidebarOpen && (
           <>
             <div className="px-3 py-2 text-xl font-semibold text-gray-900 transition-opacity duration-300 opacity-100 delay-75">

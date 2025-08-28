@@ -1,13 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import layoutReducer from "./slices/layoutSlice";
 import categoryReducer from "./slices/categorySlice";
-import queryReducer from "./slices/querySlice"; // ✅ import
-
+import queryReducer from "./slices/querySlice"; 
 export const store = configureStore({
   reducer: {
     layout: layoutReducer,
     category: categoryReducer,
-    query: queryReducer, // ✅ add here
+    query: queryReducer, 
   },
 });
 

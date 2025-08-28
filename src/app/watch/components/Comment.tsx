@@ -1,4 +1,4 @@
-// components/Comment.tsx
+
 "use client";
 import Image from "next/image";
 import { formatDate } from "@/app/utils/helperfunction";

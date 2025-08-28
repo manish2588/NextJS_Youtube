@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface CategoryState {
-  activeCategory: string; // store categoryId
+  activeCategory: string; 
 }
 
 const initialState: CategoryState = {
-  activeCategory: "all", // default All
+  activeCategory: "all", 
 };
 
 const categorySlice = createSlice({

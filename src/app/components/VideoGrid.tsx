@@ -14,7 +14,7 @@ import {
 } from "../utils/fetchVideos";
 import { useEffect, useRef } from "react";
 
-// Type for infinite query page
+
 interface VideoPage {
   items: Video[];
   nextPageToken?: string;
@@ -26,7 +26,7 @@ export default function VideoGrid() {
   ) as string;
   const dispatch = useDispatch();
 
-  // Infinite Query with proper TypeScript generics
+  
   const {
     data,
     error,
@@ -42,7 +42,7 @@ export default function VideoGrid() {
         : fetchVideosByCategoryId(activeCategory, pageParam as string),
     getNextPageParam: (lastPage: VideoPage): string | undefined =>
       lastPage.nextPageToken ?? undefined,
-    initialPageParam: "", // required for TypeScript
+    initialPageParam: "", 
     staleTime: 10 * 60 * 1000,
   });
 
@@ -52,7 +52,7 @@ export default function VideoGrid() {
   useEffect(() => {
     if (!loadMoreRef.current) return;
 
-    const currentRef = loadMoreRef.current; // Store reference for cleanup
+    const currentRef = loadMoreRef.current; 
 
     const observer = new IntersectionObserver(
       (entries) => {

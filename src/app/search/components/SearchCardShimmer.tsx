@@ -9,16 +9,16 @@ export default function SearchCardShimmer() {
 
       {/* Details Shimmer */}
       <div className="w-1/2 md:w-6/10 h-54 lg:h-72 flex flex-col space-y-2 p-2 flex-1">
-        <div className="h-5 bg-gray-300 rounded w-5/6" /> {/* Title */}
-        <div className="h-4 bg-gray-300 rounded w-3/6" /> {/* Channel Name */}
+        <div className="h-5 bg-gray-300 rounded w-5/6" /> 
+        <div className="h-4 bg-gray-300 rounded w-3/6" /> 
         <div className="flex space-x-2">
-          <div className="h-3 bg-gray-300 rounded w-2/6" /> {/* Views */}
-          <div className="h-3 bg-gray-300 rounded w-2/6" /> {/* Date */}
+          <div className="h-3 bg-gray-300 rounded w-2/6" /> 
+          <div className="h-3 bg-gray-300 rounded w-2/6" /> 
         </div>
         <div className="flex space-x-2">
-          <div className="h-3 bg-gray-300 rounded w-1/4" /> {/* Likes */}
+          <div className="h-3 bg-gray-300 rounded w-1/4" /> 
         </div>
-        <div className="h-10 bg-gray-300 rounded w-full mt-1" /> {/* Description */}
+        <div className="h-10 bg-gray-300 rounded w-full mt-1" /> 
       </div>
     </div>
   );

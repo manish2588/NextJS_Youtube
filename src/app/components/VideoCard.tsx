@@ -15,7 +15,7 @@ export default function VideoCard({ video }: VideoCardProps) {
   const dispatch = useDispatch();
   const router = useRouter();
   const handleClick = () => {
-    // 👈 close sidebar
+   
     router.push(`/watch/${video.id}`);
      window.scrollTo({ top: 0, behavior: "smooth" }); 
     setTimeout(() => {
@@ -48,7 +48,7 @@ export default function VideoCard({ video }: VideoCardProps) {
       12 * (now.getFullYear() - past.getFullYear());
     if (months < 12) return `${months}mo ago`;
 
-    // If older than 1 year, show Month Year
+   
     const monthNames = [
       "Jan",
       "Feb",

@@ -13,9 +13,9 @@ import type { Swiper as SwiperType } from "swiper";
 export default function ShortsPage() {
   const swiperRef = useRef<SwiperType | null>(null);
   const lastScrollTime = useRef<number>(0);
-  const scrollCooldown = 300; // 300ms cooldown between slides
+  const scrollCooldown = 300; 
 
-  // Infinite query with React Query v5
+  
   const {
     data,
     fetchNextPage,
@@ -26,7 +26,7 @@ export default function ShortsPage() {
   } = useInfiniteQuery({
     queryKey: ["shorts"],
     queryFn: ({ pageParam }) => fetchTrendingVideos(pageParam),
-    initialPageParam: "", // Required in React Query v5
+    initialPageParam: "", 
     getNextPageParam: (lastPage) => lastPage.nextPageToken ?? undefined,
   });
 
@@ -35,29 +35,29 @@ export default function ShortsPage() {
     const totalSlides = swiper.slides.length;
     const currentIndex = swiper.activeIndex;
     
-    // Trigger fetch when approaching the end (2 slides before the last)
+    // Trigger fetch when approaching the end
     if (currentIndex >= totalSlides - 2 && hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
     }
   };
 
-  // Add global mousewheel event listener with throttling
+  
   useEffect(() => {
     const handleGlobalWheel = (e: WheelEvent) => {
       if (!swiperRef.current) return;
       
       const now = Date.now();
       
-      // Check if enough time has passed since last scroll
+      
       if (now - lastScrollTime.current < scrollCooldown) {
         e.preventDefault();
         return;
       }
       
-      // Prevent default scrolling behavior
+      
       e.preventDefault();
       
-      // Update last scroll time
+      
       lastScrollTime.current = now;
       
       if (e.deltaY > 0) {
@@ -69,10 +69,10 @@ export default function ShortsPage() {
       }
     };
 
-    // Add event listener to the entire document
+    
     document.addEventListener('wheel', handleGlobalWheel, { passive: false });
 
-    // Cleanup
+    
     return () => {
       document.removeEventListener('wheel', handleGlobalWheel);
     };
@@ -94,7 +94,7 @@ export default function ShortsPage() {
         <FaArrowUp />
       </button>
 
-      {/* Swiper Container with Responsive Width */}
+      {/* Swiper Container */}
       <div className="w-full lg:w-[30%] h-full">
         <Swiper
           direction="vertical"

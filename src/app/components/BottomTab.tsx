@@ -6,7 +6,6 @@ import { IoHomeOutline, IoPersonCircleOutline } from "react-icons/io5";
 import { SiYoutubeshorts } from "react-icons/si";
 import { IconType } from "react-icons";
 
-// Define the type for navigation items
 interface NavigationItem {
   href: string;
   label: string;
@@ -18,11 +17,11 @@ export default function BottomTabBar() {
   const pathname = usePathname();
 
   const items: NavigationItem[] = [
-    { 
-      href: "/", 
-      label: "Home", 
-      icon: IoHomeOutline, 
-      match: (p: string) => p === "/" 
+    {
+      href: "/",
+      label: "Home",
+      icon: IoHomeOutline,
+      match: (p: string) => p === "/",
     },
     {
       href: "/shorts",
@@ -44,7 +43,7 @@ export default function BottomTabBar() {
       role="navigation"
       aria-label="Bottom navigation"
     >
-      {/* Safe area spacer for iOS */}
+      {/* Tab for the small screen only */}
       <div className="pb-[env(safe-area-inset-bottom)]">
         <ul className="mx-auto flex max-w-screen-sm items-stretch justify-around px-2 py-1">
           {items.map(({ href, label, icon: Icon, match }) => {

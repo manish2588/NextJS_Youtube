@@ -1,4 +1,4 @@
-// app/components/RouteLoader.tsx
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -13,12 +13,11 @@ const RouteLoader: React.FC = () => {
     if (pathname !== currentPath) {
       setLoading(true);
 
-      // simulate end of loading after next render
+      
       const timer = setTimeout(() => {
         setLoading(false);
         setCurrentPath(pathname);
-      }, 200); // adjust delay as needed
-
+      }, 200); 
       return () => clearTimeout(timer);
     }
   }, [pathname, currentPath]);

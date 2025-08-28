@@ -1,15 +1,15 @@
-// YouTube API Response Types
+
 interface YouTubeAPIVideoItem {
   id: string;
   snippet: VideoSnippet;
   statistics: {
     viewCount: string;
     likeCount: string;
-    [key: string]: string; // for other statistics fields
+    [key: string]: string; 
   };
   contentDetails?: {
     duration: string;
-    [key: string]: string; // for other content details
+    [key: string]: string; 
   };
 }
 
@@ -39,7 +39,7 @@ interface YouTubeAPIChannelItem {
   };
   statistics: {
     subscriberCount: string;
-    [key: string]: string; // for other statistics
+    [key: string]: string; 
   };
 }
 
@@ -117,7 +117,7 @@ export const CATEGORY_IDS: Record<string, string> = {
   Comedy: "23",
   Travel: "19",
   Education: "27",
-  Podcasts: "0", // no specific category, can fallback to search
+  Podcasts: "0",
 };
 
 // Fetch trending videos (all categories)
@@ -197,7 +197,7 @@ export const fetchVideoById = async (id: string | string[]): Promise<ExtendedVid
   };
 };
 
-// Fetch related videos - UPDATED VERSION
+// Fetch related videos 
 export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
   try {
     // First try the search method with relatedToVideoId
@@ -233,7 +233,7 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
       const videoIdsArr = channelSearchData.items
         .map((item: YouTubeAPISearchItem) => item.id?.videoId)
         .filter((videoId): videoId is string => Boolean(videoId))
-        .filter((videoId: string) => videoId !== id); // Exclude current video
+        .filter((videoId: string) => videoId !== id); 
 
       if (videoIdsArr.length === 0) return [];
 
@@ -258,7 +258,7 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
     const searchData: YouTubeAPISearchResponse = await searchRes.json();
     console.log("Search API data:", searchData);
 
-    // Extract video IDs safely with type guards
+    // Extract video IDs 
     const videoIdsArr = searchData.items
       .map((item: YouTubeAPISearchItem) => item.id?.videoId)
       .filter((videoId): videoId is string => Boolean(videoId));
@@ -318,7 +318,7 @@ export const fetchSearchResults = async (q: string): Promise<Video[]> => {
 
   const data: YouTubeAPISearchResponse = await res.json();
 
-  // Extract video IDs with proper typing
+  // Extract video IDs 
   const videoIds = data.items
     .map((item: YouTubeAPISearchItem) => item.id.videoId)
     .filter((videoId): videoId is string => Boolean(videoId));
@@ -340,6 +340,6 @@ export const fetchSearchResults = async (q: string): Promise<Video[]> => {
     id: item.id,
     snippet: item.snippet,
     statistics: item.statistics,
-    contentDetails: item.contentDetails, // this includes duration in ISO 8601 format
+    contentDetails: item.contentDetails, 
   }));
 };

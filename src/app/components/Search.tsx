@@ -10,6 +10,7 @@ import { RxCross1 } from "react-icons/rx";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaMicrophoneSlash } from "react-icons/fa";
 import { closeSidebar } from "../redux/slices/layoutSlice";
+
 // TypeScript interfaces for Speech Recognition
 interface SpeechRecognitionResult {
   readonly isFinal: boolean;
@@ -59,28 +60,28 @@ export default function Search() {
   const [query, setQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [isFocused, setIsFocused] = useState<boolean>(false); // Track focus state
 
   const [isListening, setIsListening] = useState(false);
-  const [liveTranscript, setLiveTranscript] = useState<string>(""); // 👈 live transcript
+  const [liveTranscript, setLiveTranscript] = useState<string>(""); // live transcript
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const inputRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // Navigate to search page - memoized with useCallback
   const triggerSearch = useCallback(
     (q: string) => {
       if (!q.trim()) return;
       dispatch(setQueryRedux(q));
       setShowSuggestions(false);
+      setIsFocused(false);
       router.push("/search");
       setTimeout(() => dispatch(closeSidebar()), 300);
     },
     [dispatch, router]
   );
 
-  // Setup SpeechRecognition
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
@@ -89,7 +90,7 @@ export default function Search() {
       if (SpeechRecognition) {
         recognitionRef.current = new SpeechRecognition();
         recognitionRef.current.continuous = false;
-        recognitionRef.current.interimResults = true; // 👈 show live words
+        recognitionRef.current.interimResults = true;
         recognitionRef.current.lang = "en-US";
 
         recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
@@ -106,7 +107,7 @@ export default function Search() {
           }
 
           if (interimTranscript) {
-            setLiveTranscript(interimTranscript); // show live
+            setLiveTranscript(interimTranscript);
           }
 
           if (finalTranscript) {
@@ -128,13 +129,13 @@ export default function Search() {
         };
       }
     }
-  }, [triggerSearch]); // Now triggerSearch is included in dependencies
+  }, [triggerSearch]);
 
   const startListening = () => {
     if (recognitionRef.current) {
       recognitionRef.current.start();
       setIsListening(true);
-      setLiveTranscript("Listening..."); // default placeholder
+      setLiveTranscript("Listening...");
     }
   };
 
@@ -147,7 +148,6 @@ export default function Search() {
     setLiveTranscript("");
   };
 
-  // Fetch suggestions with debounce
   useEffect(() => {
     if (query.length < 2) {
       setSuggestions([]);
@@ -160,7 +160,10 @@ export default function Search() {
         const res = await fetch(`/api/suggest?q=${encodeURIComponent(query)}`);
         const data: [string, string[]] = await res.json();
         setSuggestions(data[1]);
-        setShowSuggestions(true);
+        // Only show suggestions if input is focused
+        if (isFocused) {
+          setShowSuggestions(true);
+        }
       } catch (error) {
         console.error("Error fetching suggestions", error);
       }
@@ -168,9 +171,8 @@ export default function Search() {
 
     const debounce = setTimeout(fetchSuggestions, 200);
     return () => clearTimeout(debounce);
-  }, [query]);
+  }, [query, isFocused]);
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -178,6 +180,7 @@ export default function Search() {
         !inputRef.current.contains(event.target as Node)
       ) {
         setShowSuggestions(false);
+        setIsFocused(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -193,6 +196,20 @@ export default function Search() {
     triggerSearch(query);
   };
 
+  const handleFocus = () => {
+    setIsFocused(true);
+    if (query.length >= 2 && suggestions.length > 0) {
+      setShowSuggestions(true);
+    }
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setIsFocused(false);
+      setShowSuggestions(false);
+    }, 150);
+  };
+
   return (
     <div
       className="flex-1 flex items-center ml-3 max-w-xl relative"
@@ -204,7 +221,8 @@ export default function Search() {
           placeholder="Search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          onFocus={() => query.length >= 3 && setShowSuggestions(true)}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           className="flex-1 w-1/2 h-10 px-3 pr-10 border border-gray-300 rounded-l-full focus:outline-none focus:ring-0 focus:ring-blue-500 text-sm"
         />
 
@@ -250,46 +268,41 @@ export default function Search() {
         <IoIosMic className="text-gray-700 text-2xl" />
       </button>
 
-     <AnimatePresence>
-  {isListening && (
-    <>
-      {/* Overlay */}
-      <motion.div
-        key="overlay"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 0.5 }}
-        exit={{ opacity: 0 }}
-        onClick={stopListening} // Clicking outside closes the dialog
-        className="fixed inset-0 bg-black z-40"
-      />
+      <AnimatePresence>
+        {isListening && (
+          <>
+            <motion.div
+              key="overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              onClick={stopListening}
+              className="fixed inset-0 bg-black z-40"
+            />
 
-      {/* Dialog below navbar */}
-      <motion.div
-        key="mic-dialog"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        className="fixed w-72 lg:w-[500px] h-72 top-20 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center justify-between space-y-4 border z-50"
-      >
-        {/* Live transcript */}
-        <div className="flex items-center space-x-2">
-          <p className="text-2xl font-medium text-gray-900">
-            {liveTranscript || "Listening..."}
-          </p>
-        </div>
+            <motion.div
+              key="mic-dialog"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="fixed w-72 lg:w-[500px] h-72 top-20 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center justify-between space-y-4 border z-50"
+            >
+              <div className="flex items-center space-x-2">
+                <p className="text-2xl font-medium text-gray-900">
+                  {liveTranscript || "Listening..."}
+                </p>
+              </div>
 
-        {/* Stop button */}
-        <button
-          onClick={stopListening}
-          className="flex items-center justify-center h-14 w-14 bg-red-500 text-white rounded-full hover:bg-red-600"
-        >
-          <FaMicrophoneSlash className="w-6 h-6" />
-        </button>
-      </motion.div>
-    </>
-  )}
-</AnimatePresence>
-
+              <button
+                onClick={stopListening}
+                className="flex items-center justify-center h-14 w-14 bg-red-500 text-white rounded-full hover:bg-red-600"
+              >
+                <FaMicrophoneSlash className="w-6 h-6" />
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
