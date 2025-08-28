@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaMicrophoneSlash } from "react-icons/fa";
 import { closeSidebar } from "../redux/slices/layoutSlice";
 
-// TypeScript interfaces for Speech Recognition
+
 interface SpeechRecognitionResult {
   readonly isFinal: boolean;
   readonly [index: number]: SpeechRecognitionAlternative;
