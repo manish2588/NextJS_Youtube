@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaMicrophoneSlash } from "react-icons/fa";
 import { closeSidebar } from "../redux/slices/layoutSlice";
 
-
+// TypeScript interfaces for Speech Recognition
 interface SpeechRecognitionResult {
   readonly isFinal: boolean;
   readonly [index: number]: SpeechRecognitionAlternative;
@@ -60,10 +60,10 @@ export default function Search() {
   const [query, setQuery] = useState<string>("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
-  const [isFocused, setIsFocused] = useState<boolean>(false); // Track focus state
+  const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const [isListening, setIsListening] = useState(false);
-  const [liveTranscript, setLiveTranscript] = useState<string>(""); // live transcript
+  const [liveTranscript, setLiveTranscript] = useState<string>("");
   const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const inputRef = useRef<HTMLDivElement>(null);
@@ -82,6 +82,7 @@ export default function Search() {
     [dispatch, router]
   );
 
+  // Setup SpeechRecognition
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition =
@@ -90,7 +91,7 @@ export default function Search() {
       if (SpeechRecognition) {
         recognitionRef.current = new SpeechRecognition();
         recognitionRef.current.continuous = false;
-        recognitionRef.current.interimResults = true;
+        recognitionRef.current.interimResults = true; // show live words
         recognitionRef.current.lang = "en-US";
 
         recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
@@ -114,7 +115,7 @@ export default function Search() {
             setQuery(finalTranscript);
             triggerSearch(finalTranscript);
             setIsListening(false);
-            setLiveTranscript(""); // reset after final
+            setLiveTranscript("");
           }
         };
 
@@ -180,7 +181,7 @@ export default function Search() {
         !inputRef.current.contains(event.target as Node)
       ) {
         setShowSuggestions(false);
-        setIsFocused(false);
+        setIsFocused(false); // Reset focus state when clicking outside
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -287,12 +288,14 @@ export default function Search() {
               exit={{ opacity: 0, y: -20 }}
               className="fixed w-72 lg:w-[500px] h-72 top-20 left-1/2 transform -translate-x-1/2 bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center justify-between space-y-4 border z-50"
             >
+              {/* Live transcript */}
               <div className="flex items-center space-x-2">
                 <p className="text-2xl font-medium text-gray-900">
                   {liveTranscript || "Listening..."}
                 </p>
               </div>
 
+              {/* Stop button */}
               <button
                 onClick={stopListening}
                 className="flex items-center justify-center h-14 w-14 bg-red-500 text-white rounded-full hover:bg-red-600"
