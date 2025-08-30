@@ -123,7 +123,7 @@ export const CATEGORY_IDS: Record<string, string> = {
 // Fetch trending videos (all categories)
 export const fetchTrendingVideos = async (pageToken = ""): Promise<{ items: Video[]; nextPageToken?: string }> => {
   const res = await fetch(
-    `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&videoDuration=long&maxResults=10&regionCode=US&pageToken=${pageToken}&key=${API_KEY}`
+    `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&chart=mostPopular&videoDuration=long&maxResults=6&regionCode=US&pageToken=${pageToken}&key=${API_KEY}`
   );
   if (!res.ok) throw new Error("Failed to fetch videos");
   const data: YouTubeAPIResponse = await res.json();
@@ -167,7 +167,7 @@ export const fetchChannelLogo = async (channelId: string): Promise<string> => {
   return data.items[0].snippet.thumbnails.default.url;
 };
 
-// Extended Video interface for fetchVideoById return
+
 interface ExtendedVideo extends Video {
   channelThumbnail: string;
   subscriberCount: string;
@@ -200,9 +200,9 @@ export const fetchVideoById = async (id: string | string[]): Promise<ExtendedVid
 // Fetch related videos 
 export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
   try {
-    // First try the search method with relatedToVideoId
+    
     const searchRes = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${id}&type=video&maxResults=10&key=${API_KEY}`
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&relatedToVideoId=${id}&type=video&maxResults=15&key=${API_KEY}`
     );
 
     console.log("Search API response status:", searchRes.status);
@@ -237,7 +237,7 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
 
       if (videoIdsArr.length === 0) return [];
 
-      // Fetch details for these videos
+      // Fetch details 
       const videosRes = await fetch(
         `https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoIdsArr.join(
           ","
@@ -290,7 +290,7 @@ export const fetchRelatedVideos = async (id: string): Promise<Video[]> => {
 // Fetch comments for a video
 export const fetchCommentsByVideoId = async (videoId: string | string[]): Promise<Comment[]> => {
   const res = await fetch(
-    `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=15&key=${API_KEY}`
+    `https://www.googleapis.com/youtube/v3/commentThreads?part=snippet&videoId=${videoId}&maxResults=20&key=${API_KEY}`
   );
 
   if (!res.ok) throw new Error("Failed to fetch comments");
@@ -309,7 +309,7 @@ export const fetchCommentsByVideoId = async (videoId: string | string[]): Promis
 // Fetch search results by query
 export const fetchSearchResults = async (q: string): Promise<Video[]> => {
   const res = await fetch(
-    `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=5&videoDuration=long&q=${encodeURIComponent(
+    `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=10&videoDuration=long&q=${encodeURIComponent(
       q
     )}&key=${API_KEY}`
   );

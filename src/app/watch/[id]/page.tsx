@@ -16,12 +16,11 @@ import {
   AiFillLike,
   AiFillDislike,
 } from "react-icons/ai";
-import {
-  IoShareOutline,
-  IoDownloadOutline,
-  IoNotificationsOutline,
-} from "react-icons/io5";
+import { IoNotificationsOutline } from "react-icons/io5";
 import { BsThreeDots, BsChevronDown, BsChevronUp } from "react-icons/bs";
+import { RiShareForwardLine } from "react-icons/ri";
+import { GoDownload } from "react-icons/go";
+import { PiBellSimpleRingingLight } from "react-icons/pi";
 import {
   fetchCommentsByVideoId,
   Comment as CommentType,
@@ -160,7 +159,7 @@ export default function VideoPage() {
                   }`}
                 >
                   {!isSubscribed && (
-                    <IoNotificationsOutline className="w-4 h-4" />
+                    <PiBellSimpleRingingLight className="w-5 h-5" />
                   )}
                   {isSubscribed ? "Subscribed" : "Subscribe"}
                 </button>
@@ -203,14 +202,14 @@ export default function VideoPage() {
                 </div>
 
                 <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  <IoShareOutline className="w-5 h-5" />
+                  <RiShareForwardLine className="w-5 h-5" />
                   <span className="text-sm font-medium hidden sm:block">
                     Share
                   </span>
                 </button>
 
                 <button className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
-                  <IoDownloadOutline className="w-5 h-5" />
+                  <GoDownload className="w-5 h-5" />
                   <span className="text-sm font-medium hidden sm:block">
                     Download
                   </span>
